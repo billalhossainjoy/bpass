@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   build-release:
-    name: Build AAB and extension zip
+    name: Build Android and extension artifacts
     runs-on: ubuntu-latest
     env:
       ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
@@ -78,6 +78,12 @@ jobs:
           ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/mobile/android/app/release.keystore
         run: pnpm android:bundle
 
+      - name: Build Android APK
+        env:
+          ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/mobile/android/app/release.keystore
+        working-directory: apps/mobile/android
+        run: ./gradlew --no-daemon assembleRelease
+
       - name: Package artifacts
         shell: bash
         run: |
@@ -87,6 +93,12 @@ jobs:
           cd ../../..
           cp apps/mobile/android/app/build/outputs/bundle/release/app-release.aab \
             "artifacts/bpass-android-${{ steps.meta.outputs.tag }}.aab"
+          apk_path="$(find apps/mobile/android/app/build/outputs/apk/release -maxdepth 1 -type f -name '*.apk' | sort | head -n 1)"
+          if [[ -z "$apk_path" ]]; then
+            echo "No release APK found" >&2
+            exit 1
+          fi
+          cp "$apk_path" "artifacts/bpass-android-${{ steps.meta.outputs.tag }}.apk"
           ls -lh artifacts
 
       - name: Upload workflow artifacts
