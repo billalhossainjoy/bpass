@@ -95,9 +95,20 @@ jobs:
         id: apk
         shell: bash
         run: |
+          apksigner_path="$(find "$ANDROID_HOME/build-tools" -path '*/apksigner' -type f | sort -V | tail -n 1)"
+          if [[ -z "$apksigner_path" ]]; then
+            echo "apksigner not found" >&2
+            exit 1
+          fi
+
+          has_release_signing=false
+          if [[ -f apps/mobile/android/app/release.keystore && -n "$ANDROID_KEYSTORE_PASSWORD" && -n "$ANDROID_KEY_ALIAS" && -n "$ANDROID_KEY_PASSWORD" ]]; then
+            has_release_signing=true
+          fi
+
           release_apk="apps/mobile/android/app/build/outputs/apk/release/app-release.apk"
           debug_apk="apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk"
-          if [[ -f "$release_apk" ]]; then
+          if [[ "$has_release_signing" == true && -f "$release_apk" ]]; then
             apk_path="$release_apk"
             signing="release"
           elif [[ -f "$debug_apk" ]]; then
@@ -107,7 +118,7 @@ jobs:
             echo "No signed APK found" >&2
             exit 1
           fi
-          apksigner verify --print-certs "$apk_path"
+          "$apksigner_path" verify --print-certs "$apk_path"
           echo "path=$apk_path" >> "$GITHUB_OUTPUT"
           echo "signing=$signing" >> "$GITHUB_OUTPUT"
 
