@@ -1,0 +1,5 @@
+# Vite build output (copied into native projects by Capacitor)
+dist/
+
+# Local SDK path — set by Android Studio
+android/local.properties

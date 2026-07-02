@@ -1,0 +1,46 @@
+{
+  "name": "@bpass/mobile",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "tsc --noEmit",
+    "sync": "cap sync",
+    "sync:android": "cap sync android",
+    "build:android": "pnpm build && cap sync android",
+    "android:doctor": "bash ../../scripts/mobile-android.sh doctor",
+    "android:build": "bash ../../scripts/mobile-android.sh build",
+    "android:bundle": "bash ../../scripts/mobile-android.sh bundle",
+    "android:run": "bash ../../scripts/mobile-android.sh run",
+    "ios": "cap open ios",
+    "android": "cap open android",
+    "add:android": "cap add android",
+    "add:ios": "cap add ios"
+  },
+  "dependencies": {
+    "@bpass/core": "workspace:*",
+    "@bpass/platform-web": "workspace:*",
+    "@bpass/ui": "workspace:*",
+    "@capacitor/android": "^8.4.1",
+    "@capacitor/app": "^8.1.0",
+    "@capacitor/core": "^8.4.1",
+    "@capacitor/ios": "^8.4.1",
+    "@capacitor/status-bar": "^8.0.2",
+    "@ionic/react": "^8.7.17",
+    "ionicons": "^8.0.13",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.4.1",
+    "@tailwindcss/vite": "^4.2.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "tailwindcss": "^4.2.2",
+    "typescript": "~6.0.2",
+    "vite": "^8.1.0"
+  }
+}

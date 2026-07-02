@@ -1,0 +1,16 @@
+{
+  "name": "@bpass/platform-extension",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@bpass/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.2.0",
+    "typescript": "~6.0.2"
+  }
+}

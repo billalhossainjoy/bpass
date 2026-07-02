@@ -1,0 +1,26 @@
+import { cn } from "../lib/utils"
+
+interface LogoProps {
+  className?: string
+  size?: number
+}
+
+/** BPass "B" mark — inline SVG, works in popup and scales cleanly. */
+export function Logo({ className, size = 28 }: LogoProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 128 128"
+      width={size}
+      height={size}
+      className={cn("shrink-0", className)}
+      aria-hidden="true"
+    >
+      <rect width="128" height="128" rx="28" fill="#171717" />
+      <path
+        fill="#FAFAFA"
+        d="M36 32h34.5c19.2 0 31.5 11.2 31.5 27.5 0 11.8-6.2 20.2-16.5 23.5 11.2 3.5 18 12.2 18 25.5 0 18.5-13.5 31.5-34.5 31.5H36V32zm26.5 40.5c10.2 0 15.5-5 15.5-13s-5.3-13-15.5-13H52v26h10.5zm2 43.5c11.5 0 17.5-5.8 17.5-14.5S76 87 64.5 87H52v29h12.5z"
+      />
+    </svg>
+  )
+}

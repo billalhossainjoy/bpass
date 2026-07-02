@@ -1,0 +1,107 @@
+name: Build Release Artifacts
+
+on:
+  push:
+    branches:
+      - "**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-build-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-release:
+    name: Build AAB and extension zip
+    runs-on: ubuntu-latest
+    env:
+      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK packages
+        run: |
+          sdkmanager "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.30.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Prepare release metadata
+        id: meta
+        shell: bash
+        run: |
+          short_sha="${GITHUB_SHA::7}"
+          safe_ref="$(printf '%s' "${GITHUB_REF_NAME}" | tr '/_' '--' | tr -cd 'A-Za-z0-9.-')"
+          tag="build-${safe_ref}-${GITHUB_RUN_NUMBER}.${GITHUB_RUN_ATTEMPT}-${short_sha}"
+          echo "short_sha=${short_sha}" >> "$GITHUB_OUTPUT"
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+
+      - name: Decode Android signing keystore
+        if: ${{ env.ANDROID_KEYSTORE_BASE64 != '' }}
+        shell: bash
+        run: |
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > apps/mobile/android/app/release.keystore
+
+      - name: Build Chrome extension
+        run: pnpm build:extension
+
+      - name: Build Android App Bundle
+        env:
+          ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/mobile/android/app/release.keystore
+        run: pnpm android:bundle
+
+      - name: Package artifacts
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          cd apps/extension/dist
+          zip -qr "../../../artifacts/bpass-extension-${{ steps.meta.outputs.tag }}.zip" .
+          cd ../../..
+          cp apps/mobile/android/app/build/outputs/bundle/release/app-release.aab \
+            "artifacts/bpass-android-${{ steps.meta.outputs.tag }}.aab"
+          ls -lh artifacts
+
+      - name: Upload workflow artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: bpass-release-artifacts-${{ steps.meta.outputs.short_sha }}
+          path: artifacts/*
+          if-no-files-found: error
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          gh release create "${{ steps.meta.outputs.tag }}" artifacts/* \
+            --target "${GITHUB_SHA}" \
+            --title "BPass build ${{ steps.meta.outputs.short_sha }}" \
+            --notes "Automated release for ${GITHUB_REF_NAME} at ${GITHUB_SHA}."

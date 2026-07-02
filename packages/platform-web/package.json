@@ -1,0 +1,15 @@
+{
+  "name": "@bpass/platform-web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@bpass/core": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "~6.0.2"
+  }
+}

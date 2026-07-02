@@ -1,0 +1,34 @@
+{
+  "name": "bpass-monorepo",
+  "private": true,
+  "version": "0.0.0",
+  "packageManager": "pnpm@10.30.0",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "dev:extension": "pnpm --filter @bpass/extension dev",
+    "dev:mobile": "pnpm --filter @bpass/mobile dev",
+    "build:extension": "pnpm --filter @bpass/extension build",
+    "build:mobile": "pnpm --filter @bpass/mobile build",
+    "cap:sync": "pnpm build:mobile && pnpm --filter @bpass/mobile sync",
+    "cap:sync:android": "pnpm build:mobile && pnpm --filter @bpass/mobile sync:android",
+    "cap:open:android": "pnpm --filter @bpass/mobile android",
+    "cap:open:ios": "pnpm --filter @bpass/mobile ios",
+    "cap:add:android": "pnpm --filter @bpass/mobile add:android",
+    "cap:add:ios": "pnpm --filter @bpass/mobile add:ios",
+    "android:doctor": "bash scripts/mobile-android.sh doctor",
+    "android:sync": "bash scripts/mobile-android.sh sync",
+    "android:build": "bash scripts/mobile-android.sh build",
+    "android:bundle": "bash scripts/mobile-android.sh bundle",
+    "android:run": "bash scripts/mobile-android.sh run",
+    "android:open": "bash scripts/mobile-android.sh open",
+    "android:devices": "bash scripts/mobile-android.sh devices"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.4"
+  }
+}

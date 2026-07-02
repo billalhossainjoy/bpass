@@ -1,0 +1,29 @@
+@import "@bpass/ui/styles.css";
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+  background: var(--background);
+}
+
+ion-app {
+  height: 100%;
+}
+
+ion-content {
+  height: 100%;
+}
+
+ion-content {
+  --background: var(--background);
+  --padding-top: env(safe-area-inset-top);
+  --padding-bottom: env(safe-area-inset-bottom);
+}
+
+ion-content::part(scroll) {
+  display: flex;
+  min-height: 0;
+  overflow: hidden;
+}
