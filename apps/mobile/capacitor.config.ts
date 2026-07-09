@@ -8,17 +8,17 @@ const config: CapacitorConfig = {
     androidScheme: "https",
   },
   android: {
-    backgroundColor: "#171717",
+    backgroundColor: "#ffffff",
     allowMixedContent: false,
   },
   ios: {
-    backgroundColor: "#171717",
+    backgroundColor: "#ffffff",
     contentInset: "automatic",
   },
   plugins: {
     StatusBar: {
-      style: "DARK",
-      backgroundColor: "#171717",
+      style: "LIGHT",
+      backgroundColor: "#ffffff",
     },
   },
 }

@@ -20,8 +20,8 @@ function App() {
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return
 
-    void StatusBar.setStyle({ style: Style.Dark })
-    void StatusBar.setBackgroundColor({ color: "#171717" })
+    void StatusBar.setStyle({ style: Style.Light })
+    void StatusBar.setBackgroundColor({ color: "#ffffff" })
     if (Capacitor.getPlatform() === "android") {
       void StatusBar.setOverlaysWebView({ overlay: false })
     }

@@ -46,7 +46,7 @@ export function BPassApp() {
         layoutClassName ?? "min-h-dvh w-full",
       )}
     >
-      <header className="flex shrink-0 items-center gap-2 border-b px-3 py-2.5">
+      <header className="flex shrink-0 items-center gap-2 border-b bg-background px-3 py-2.5">
         <Logo size={28} />
         <div className="flex flex-col">
           <span className="text-sm font-semibold leading-none">BPass</span>
@@ -59,7 +59,7 @@ export function BPassApp() {
         </div>
       </header>
 
-      <div className="shrink-0 border-b px-3 py-2">
+      <div className="shrink-0 border-b bg-background px-3 py-2">
         <div className="relative">
           <Search className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -93,7 +93,7 @@ export function BPassApp() {
         )}
       </main>
 
-      <footer className="shrink-0 border-t p-3">
+      <footer className="shrink-0 border-t bg-background p-3">
         <Button className="w-full" onClick={() => setAddOpen(true)}>
           <Plus className="mr-2 size-4" /> Add account
         </Button>

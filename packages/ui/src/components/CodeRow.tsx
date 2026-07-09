@@ -109,7 +109,7 @@ export function CodeRow({ account, now, onEdit, onDelete }: CodeRowProps) {
             className="mt-2.5 flex w-full min-w-0 items-center justify-between gap-2 rounded-md bg-muted/40 px-2.5 py-2 text-left transition-colors hover:bg-muted/70"
             title="Click to copy code"
           >
-            <span className="min-w-0 truncate font-mono text-xl font-bold leading-none tracking-widest text-foreground tabular-nums">
+            <span className="min-w-0 truncate font-mono text-[clamp(1rem,7vw,1.25rem)] font-bold leading-none tracking-[0.12em] text-foreground tabular-nums">
               {formatCode(code)}
             </span>
             <span className="flex size-7 shrink-0 items-center justify-center text-muted-foreground">
