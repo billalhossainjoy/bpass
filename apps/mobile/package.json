@@ -4,7 +4,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "generate-icons": "node scripts/generate-icons.mjs",
     "dev": "vite",
+    "prebuild": "pnpm generate-icons",
     "build": "vite build",
     "lint": "tsc --noEmit",
     "sync": "cap sync",
@@ -39,6 +41,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
+    "sharp": "^0.34.5",
     "tailwindcss": "^4.2.2",
     "typescript": "~6.0.2",
     "vite": "^8.1.0"

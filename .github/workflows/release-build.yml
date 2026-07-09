@@ -70,6 +70,21 @@ jobs:
         run: |
           printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > apps/mobile/android/app/release.keystore
 
+      - name: Require Android release signing
+        shell: bash
+        run: |
+          missing=()
+          [[ -f apps/mobile/android/app/release.keystore ]] || missing+=("ANDROID_KEYSTORE_BASE64")
+          [[ -n "$ANDROID_KEYSTORE_PASSWORD" ]] || missing+=("ANDROID_KEYSTORE_PASSWORD")
+          [[ -n "$ANDROID_KEY_ALIAS" ]] || missing+=("ANDROID_KEY_ALIAS")
+          [[ -n "$ANDROID_KEY_PASSWORD" ]] || missing+=("ANDROID_KEY_PASSWORD")
+
+          if (( ${#missing[@]} > 0 )); then
+            printf 'Android release signing is required before publishing installable APKs. Missing secrets:\n' >&2
+            printf -- '- %s\n' "${missing[@]}" >&2
+            exit 1
+          fi
+
       - name: Build Chrome extension
         run: pnpm build:extension
 
@@ -84,12 +99,7 @@ jobs:
         working-directory: apps/mobile/android
         shell: bash
         run: |
-          if [[ -f app/release.keystore && -n "$ANDROID_KEYSTORE_PASSWORD" && -n "$ANDROID_KEY_ALIAS" && -n "$ANDROID_KEY_PASSWORD" ]]; then
-            ./gradlew --no-daemon assembleRelease
-          else
-            echo "Release signing secrets are not fully configured; building a debug-signed APK for direct install."
-            ./gradlew --no-daemon assembleDebug
-          fi
+          ./gradlew --no-daemon assembleRelease
 
       - name: Verify Android signing
         id: apk
@@ -101,26 +111,15 @@ jobs:
             exit 1
           fi
 
-          has_release_signing=false
-          if [[ -f apps/mobile/android/app/release.keystore && -n "$ANDROID_KEYSTORE_PASSWORD" && -n "$ANDROID_KEY_ALIAS" && -n "$ANDROID_KEY_PASSWORD" ]]; then
-            has_release_signing=true
-          fi
-
           release_apk="apps/mobile/android/app/build/outputs/apk/release/app-release.apk"
-          debug_apk="apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk"
-          if [[ "$has_release_signing" == true && -f "$release_apk" ]]; then
-            apk_path="$release_apk"
-            signing="release"
-          elif [[ -f "$debug_apk" ]]; then
-            apk_path="$debug_apk"
-            signing="debug"
-          else
-            echo "No signed APK found" >&2
+          if [[ ! -f "$release_apk" ]]; then
+            echo "No release-signed APK found" >&2
             exit 1
           fi
+          apk_path="$release_apk"
           "$apksigner_path" verify --print-certs "$apk_path"
           echo "path=$apk_path" >> "$GITHUB_OUTPUT"
-          echo "signing=$signing" >> "$GITHUB_OUTPUT"
+          echo "signing=release" >> "$GITHUB_OUTPUT"
 
       - name: Package artifacts
         shell: bash

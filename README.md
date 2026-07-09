@@ -99,8 +99,9 @@ It builds:
 The workflow uploads both as run artifacts and creates a GitHub Release tagged
 like `build-main-12.1-abcdef0`.
 
-Android signing is optional. For a signed release AAB, add these repository
-secrets in GitHub:
+Android release signing is required for published APKs. Without it, Android may
+warn that the app is unsafe or built for testing and force users through
+**Install anyway**. Add these repository secrets in GitHub:
 
 - `ANDROID_KEYSTORE_BASE64` — base64 encoded keystore file
 - `ANDROID_KEYSTORE_PASSWORD`
@@ -112,6 +113,25 @@ Create the base64 value with:
 ```bash
 base64 -w 0 release.keystore
 ```
+
+Create a release keystore with:
+
+```bash
+keytool -genkeypair -v \
+  -keystore release.keystore \
+  -alias bpass \
+  -keyalg RSA \
+  -keysize 2048 \
+  -validity 10000
+```
+
+Use the alias as `ANDROID_KEY_ALIAS`. Keep the keystore and passwords private;
+losing them means future APK updates cannot use the same signing identity.
+
+Sideloaded APKs can still show a generic browser/file-manager warning because
+they are installed outside Google Play. The signing change removes the debug/test
+APK warning, but the lowest-friction install path is publishing the signed build
+through Google Play.
 
 ## Import / export
 
