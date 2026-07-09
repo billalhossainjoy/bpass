@@ -133,6 +133,10 @@ they are installed outside Google Play. The signing change removes the debug/tes
 APK warning, but the lowest-friction install path is publishing the signed build
 through Google Play.
 
+The Android build reads `ANDROID_VERSION_CODE` and `ANDROID_VERSION_NAME` from
+the environment. GitHub releases set these automatically from the workflow run
+number so every Play Console upload has a higher version code.
+
 ## Import / export
 
 In **Settings**:

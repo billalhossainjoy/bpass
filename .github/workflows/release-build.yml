@@ -22,6 +22,8 @@ jobs:
       ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
       ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
       ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+      ANDROID_VERSION_CODE: ${{ github.run_number }}
+      ANDROID_VERSION_NAME: 1.0.${{ github.run_number }}
 
     steps:
       - name: Checkout
@@ -96,6 +98,8 @@ jobs:
       - name: Build Android APK
         env:
           ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/mobile/android/app/release.keystore
+          ANDROID_VERSION_CODE: ${{ github.run_number }}
+          ANDROID_VERSION_NAME: 1.0.${{ github.run_number }}
         working-directory: apps/mobile/android
         shell: bash
         run: |

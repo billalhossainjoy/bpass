@@ -5,6 +5,8 @@ def releaseKeystorePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
 def releaseKeyAlias = System.getenv("ANDROID_KEY_ALIAS")
 def releaseKeyPassword = System.getenv("ANDROID_KEY_PASSWORD")
 def hasReleaseSigning = releaseKeystoreFile && releaseKeystorePassword && releaseKeyAlias && releaseKeyPassword
+def resolvedVersionCode = (System.getenv("ANDROID_VERSION_CODE") ?: "2") as Integer
+def resolvedVersionName = System.getenv("ANDROID_VERSION_NAME") ?: "1.0.1"
 
 android {
     namespace = "com.bpass.authenticator"
@@ -13,8 +15,8 @@ android {
         applicationId "com.bpass.authenticator"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode resolvedVersionCode
+        versionName resolvedVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -34,7 +36,8 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             if (hasReleaseSigning) {
                 signingConfig signingConfigs.release
             }
