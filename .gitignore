@@ -22,6 +22,10 @@ artifacts/
 # packaged extension keys
 *.pem
 
+# Android release signing keys
+*.keystore
+*.jks
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
